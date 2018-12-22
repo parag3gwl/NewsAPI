@@ -5,9 +5,11 @@ import java.util.List;
 
 public class Articles implements Serializable{
 	private static final long serialVersionUID = -4458926482850050935L;
-	
-	//private ArticlesData dataList;
 	public String title;
+	public String description;
+	public String url;
+
+	
 	public String getTitle() {
 		return title;
 	}
@@ -32,7 +34,12 @@ public class Articles implements Serializable{
 		this.url = url;
 	}
 
-	public String description;
-	public String url;
-
+	public Articles(String title, String description, String url) {
+		super();
+		this.title = title;
+		this.description = description;
+		this.url = url;
+	}
+	
+	
 }
