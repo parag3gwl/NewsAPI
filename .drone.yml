@@ -1,0 +1,43 @@
+kind: pipeline
+name: default
+
+steps:
+- name: build
+  image: openjdk:8-jdk
+  commands:
+  - chmod +x ./gradlew
+  - ./gradlew clean build
+
+- name: docker
+  image: plugins/docker
+  settings:
+    repo: parag3gwl/spring
+    tags: latest
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+
+- name: deploy_master
+  image: vallard/drone-kube
+  settings:
+    template: kubernetes/deployment.yml
+    namespace: default
+    server: https://35.232.157.193
+    ca:
+      from_secret: kube_ca
+    token: eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRlZmF1bHQtdG9rZW4tenE4ZzUiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVmYXVsdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImEyNTA4ZDhlLTA0MjUtMTFlOS05ODJiLTQyMDEwYTgwMDBiZCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmRlZmF1bHQifQ.bePdQta_lM1IMJ77-D4PmvHIbNAm8ClzDAcd5IL51XL9orn7zElwBIVQu7VGNtzSeWntLU7c9ctuXunxJ_IeA9Cg4gryzwWM5W7Kzy3q9IrbYgbz34rCkMGpZqUpLLiyoLWSarV0FzuYxy1SVBkVKZNnV6LFHht1_ZiFnNqGIQYtDJnP209eipfLLv9rrNTXwADKfp9IpSVzjmMfc5t4p1fj3QNOGprxwqdpzW-qfq_BWHfc8NkroRUB_N3FQG9MlhgiX7HCT4PwljZ9QeXimI_5K_Iy60UPHTqhxGWyFVVK8AJQ5m188EsSreZVJ5aIb2_ixBjBKetT7jfdmwvjMw
+  when:
+      event:
+      - push
+      - pull-request
+      branch:
+      - test
+    
+- name: deploy
+  image: quay.io/hectorqin/drone-kubectl
+  settings:
+    kubernetes_template: /kubernetes/deployment.yml
+    kubernetes_namespace: default
+    kubernetes_server: https://35.232.157.193
+    kubernetes_token: eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRlZmF1bHQtdG9rZW4tenE4ZzUiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVmYXVsdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImEyNTA4ZDhlLTA0MjUtMTFlOS05ODJiLTQyMDEwYTgwMDBiZCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmRlZmF1bHQifQ.bePdQta_lM1IMJ77-D4PmvHIbNAm8ClzDAcd5IL51XL9orn7zElwBIVQu7VGNtzSeWntLU7c9ctuXunxJ_IeA9Cg4gryzwWM5W7Kzy3q9IrbYgbz34rCkMGpZqUpLLiyoLWSarV0FzuYxy1SVBkVKZNnV6LFHht1_ZiFnNqGIQYtDJnP209eipfLLv9rrNTXwADKfp9IpSVzjmMfc5t4p1fj3QNOGprxwqdpzW-qfq_BWHfc8NkroRUB_N3FQG9MlhgiX7HCT4PwljZ9QeXimI_5K_Iy60UPHTqhxGWyFVVK8AJQ5m188EsSreZVJ5aIb2_ixBjBKetT7jfdmwvjMw
