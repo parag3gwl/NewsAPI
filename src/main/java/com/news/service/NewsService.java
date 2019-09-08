@@ -22,6 +22,7 @@ public class NewsService {
 		
 		RestTemplate restTemplate = new RestTemplate();
 		String uri = Constants.uri + "?country=" + country + "&category=" + category + "&apiKey=" + Constants.apikey;
+		System.out.println(uri);
 		ResponseEntity<NewsContents> restResponse = restTemplate.getForEntity(uri, NewsContents.class);
 		System.out.println(restResponse.getBody());
 		List<NewsResponse> responseList = new ArrayList<>();
