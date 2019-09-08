@@ -18,18 +18,11 @@ steps:
     password:
       from_secret: docker_password
 
-- name: deploy_master
-  image: vallard/drone-kube
+- name: deploy
+  image: quay.io/hectorqin/drone-kubectl
   settings:
-    template: kubernetes/deployment.yml
-    namespace: default
-    server: https://34.68.50.92
-    ca:
-      from_secret: kube_ca
-    token: token
-  when:
-      event:
-      - push
-      - pull-request
-      branch:
-      - deploy
+    kubernetes_template: /kubernetes/deployment.yml
+    kubernetes_namespace: default
+    kubernetes_server: https://34.68.50.92
+    kubernetes_token:
+      from_secret: token
