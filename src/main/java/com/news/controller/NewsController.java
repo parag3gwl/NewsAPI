@@ -20,12 +20,14 @@ public class NewsController {
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index() {
+		System.out.println("/ called");
 		return "Greetings from Spring Boot!";
 	}
 
 	@RequestMapping(value = "/getNews", method = RequestMethod.GET)
 	public ResponseEntity<List<NewsResponse>> getNews(@RequestParam("country") String country,
 			@RequestParam("category") String category, @RequestParam("keyword") String keyword) {
+		System.out.println("/getNews Called");
 		if (validateInput(country, category)) {
 			List<NewsResponse> response = newsService.getNews(country, category, keyword);
 			return new ResponseEntity<List<NewsResponse>>(response, HttpStatus.OK);
